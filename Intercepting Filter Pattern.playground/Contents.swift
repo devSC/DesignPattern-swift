@@ -8,6 +8,91 @@
  客户端（Client） - Client 是向 Target 对象发送请求的对象。
 
 */
-import UIKit
+import Foundation
 
-var str = "Hello, playground"
+protocol Filter {
+    func excute(request: String) -> Void
+}
+
+class AuthenticationFilter: Filter {
+    func excute(request: String) {
+        print("Authentication request: \(request)")
+    }
+}
+
+class DebugFilter: Filter {
+    func excute(request: String) {
+        print("request log: \(request)")
+    }
+}
+
+class Target {
+    func excute(request: String) {
+        print("Excuting request: \(request)")
+    }
+}
+
+class FilterChain {
+    var filters = [Filter]()
+    private var target: Target?
+    
+    func addFilter(filter: Filter) {
+        filters.append(filter)
+    }
+    
+    func excute(request: String) {
+        for filter in filters {
+            filter.excute(request: request)
+        }
+        
+        guard let target = target else {
+            return
+        }
+        
+        target.excute(request: request)
+    }
+    
+    func setTarget(target: Target) {
+        self.target = target
+    }
+}
+
+class FilterManager {
+    
+    private let filterChain = FilterChain()
+    
+    init(target: Target) {
+        filterChain.setTarget(target: target)
+    }
+    
+    func setFilter(filter: Filter) {
+        filterChain.addFilter(filter: filter)
+    }
+    
+    func filterRequest(request: String) {
+        filterChain.excute(request: request)
+    }
+}
+
+class Client {
+    private var filterManager: FilterManager?
+    
+    func setFilterManager(filterManager: FilterManager) {
+        self.filterManager = filterManager
+    }
+    
+    func sendRequest(request: String) -> Void {
+        guard let filterManager = filterManager else {
+            return
+        }
+        filterManager.filterRequest(request: request)
+    }
+}
+
+let filterManager = FilterManager(target: Target())
+filterManager.setFilter(filter: AuthenticationFilter())
+filterManager.setFilter(filter: DebugFilter())
+
+let client = Client()
+client.setFilterManager(filterManager: filterManager)
+client.sendRequest(request: "Home")
