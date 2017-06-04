@@ -16,3 +16,62 @@
 */
 
 import Foundation
+
+
+/*
+ * 封装不变部分，扩展可变部分
+ * 这里不变部分是 游戏的执行顺序, 即游戏的执行方法, 而变得部分有游戏内容.
+ */
+class Game {
+    public func initialize() {
+        
+    }
+    
+    public func startPlay() {
+        
+    }
+    
+    public func endPlay() {
+        
+    }
+    
+    final func play() {
+        initialize()
+        startPlay()
+        endPlay()
+    }
+}
+
+class Circket: Game {
+    override func initialize() {
+        print("Cricket Game Initialized! Start playing.")
+    }
+    
+    override func startPlay() {
+        print("Cricket Game Started. Enjoy the game!")
+    }
+    
+    override func endPlay() {
+        print("Cricket Game Finished!")
+    }
+}
+
+class Football: Game {
+    override func initialize() {
+        print("Football Game Initialized! Start playing.")
+    }
+    
+    override func startPlay() {
+        print("Football Game Started. Enjoy the game!")
+    }
+    
+    override func endPlay() {
+        print("Football Game Finished!")
+    }
+}
+
+var game: Game = Circket()
+game.play()
+
+game = Football()
+game.play()
