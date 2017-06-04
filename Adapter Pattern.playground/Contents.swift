@@ -19,4 +19,78 @@
 
 import UIKit
 
-var str = "Hello, playground"
+protocol MediaPlayer {
+    func play(_ audioType: String, fileName: String)
+}
+
+protocol AdvanceMediaPlayer {
+    func playVlc(_ fileName: String)
+    func playMp4(_ fileName: String)
+}
+
+class VLCPlayer: AdvanceMediaPlayer {
+    func playMp4(_ fileName: String) {
+        
+    }
+    
+    func playVlc(_ fileName: String) {
+        print("play vlc file. Name: \(fileName)")
+    }
+}
+
+class Mp4Player: AdvanceMediaPlayer {
+    func playVlc(_ fileName: String) {
+        
+    }
+    
+    func playMp4(_ fileName: String) {
+        print("play mp4 file. Name: \(fileName)")
+    }
+}
+
+class MediaAdapter: MediaPlayer {
+    let advanceMusicPlayer: AdvanceMediaPlayer?
+    
+    init(_ audioType: String) {
+        if audioType == "vlc" {
+            self.advanceMusicPlayer = VLCPlayer()
+        }
+        else if audioType == "mp4" {
+            self.advanceMusicPlayer = Mp4Player()
+        }
+        else {
+            self.advanceMusicPlayer = nil
+        }
+    }
+    
+    func play(_ audioType: String, fileName: String) {
+        if audioType == "vlc" {
+            advanceMusicPlayer?.playVlc(fileName)
+        }
+        else if audioType == "mp4" {
+            advanceMusicPlayer?.playMp4(fileName)
+        }
+    }
+}
+
+
+class AudioPlayer: MediaPlayer {
+    func play(_ audioType: String, fileName: String) {
+        if audioType == "mp3" {
+            print("Playing mp3 file. Name: \(fileName)")
+        }
+        else if audioType == "vlc" || audioType == "mp4" {
+            let mediaAdapter = MediaAdapter(audioType)
+            mediaAdapter.play(audioType, fileName: fileName)
+        }
+        else {
+            print("Media type not supported")
+        }
+    }
+}
+
+let audioPlayer = AudioPlayer()
+audioPlayer.play("mp3", fileName: "beyond the horizon.mp3")
+audioPlayer.play("mp4", fileName: "alone.mp4")
+audioPlayer.play("vlc", fileName: "far far away.vlc")
+audioPlayer.play("avi", fileName: "mind me.avi")
